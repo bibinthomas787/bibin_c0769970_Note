@@ -8,12 +8,20 @@
 
 import UIKit
 
+struct NotesFolder
+{
+    var name = String()
+    var arrayNotes = [String]()
+}
+
+
 class NoteTableViewController: UITableViewController,UITabBarDelegate {
     
     
     @IBOutlet weak var edit: UIBarButtonItem!
     var folders : [String] = []
     var count : Int = 0
+    var myIndex = 0
 
     
     override func viewDidLoad() {
@@ -45,7 +53,7 @@ class NoteTableViewController: UITableViewController,UITabBarDelegate {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell")
         cell?.textLabel?.text = folders[indexPath.row]
-        cell?.imageView?.image = UIImage(named: "folder-icon.jpg")
+        cell?.imageView?.image = UIImage(named: "folder-icon.png")
         // Configure the cell...
 
         return cell!
@@ -83,7 +91,7 @@ class NoteTableViewController: UITableViewController,UITabBarDelegate {
     // Override to support conditional rearranging of the table view.
     //enabling the edit mode cause delete button to be visible for all the cells .
 
-    //disable the button by implementing these methods
+    //function to disable the button
 
      override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
 
@@ -128,10 +136,20 @@ class NoteTableViewController: UITableViewController,UITabBarDelegate {
                alert.addAction(UIAlertAction(title: "Add Item", style: .default, handler: { (UIAlertAction) in
     
                    let content = alert.textFields![0] as UITextField
-    
+                 guard let folderName = content.text
+                else {
+                    return
+                }
+                if self.folders.contains(content.text!)  {
+                   
+                    self.showAlertForDuplicateFolder(folderName: folderName)
+                                  return                    }
+                else {
                    self.folders.append(content.text!)
         
                    self.tableView.reloadData()
+                    
+                }
         
                }))
         
@@ -143,7 +161,7 @@ class NoteTableViewController: UITableViewController,UITabBarDelegate {
     }
     
     
-    //deleting the folders from table view
+    //function to delete folders
 
         override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath)
 
@@ -161,7 +179,7 @@ class NoteTableViewController: UITableViewController,UITabBarDelegate {
 
         }
     
-   //creating folders in the table
+   //function to create folders
 
 
 
@@ -184,6 +202,20 @@ class NoteTableViewController: UITableViewController,UITabBarDelegate {
            folders.insert(rowToMove, at: destinationIndexPath.row)
 
    }
+    
+    
+    
+    //function of duplicate folder name
+    
+     func showAlertForDuplicateFolder(folderName: String) {
+           let alertController = UIAlertController(title: "Name Taken", message: "Please choose a different name.", preferredStyle: .alert)
+           
+           let cancelAction = UIAlertAction(title: "Ok", style: .default, handler: { (action : UIAlertAction!) -> Void in })
+
+           alertController.addAction(cancelAction)
+
+           self.present(alertController, animated: true, completion: nil)
+       }
 
    }
 
